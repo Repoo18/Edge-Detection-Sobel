@@ -1,0 +1,30 @@
+%% this Matlab & Octave script detects wall and floor edges of a given room picture  	
+%% get black & white image 	
+img = double(imread("room.jpg")) / 255; 	
+img = rgb2gray(img); 	imshow(img);  	
+
+%% perform smoothing 	
+filter_size = 25; 	
+filter_sigma = 5; 	
+pkg load image; 	
+filter = fspecial("gaussian", filter_size, filter_sigma); 	
+smoothed = imfilter(img, filter); 	
+imshow(smoothed);  	
+
+% Compute x, y gradients 	
+[gx, gy] = imgradientxy(smoothed, "sobel"); 	
+imshow((gx + 4) / 8); % or imshow(gx, [-4, 4]) or imshow(gy, []) or imagesc()  
+
+% Obtain gradient magnitude and direction 	
+[gmag gdir] = imgradient(gx, gy); 	
+imshow(gmag / (4 * sqrt(2))); 	
+imshow((gdir + 180) / 360);% angle in degrees [-180, 180]  	
+
+%show floor and wall edges together 	
+imshow(gmag >= 0.1);  	
+
+%show vertical only 	
+imshow(gmag >= 0.1 & (160 <= gdir | -160 >= gdir | (-20 <= gdir & gdir <= 20)));  	
+
+%show horizontal only 	
+imshow(gmag >= 0.1 & ((75 <= gdir & 105 >= gdir) | (-105 <= gdir & gdir <= -75)));
