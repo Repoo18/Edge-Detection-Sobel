@@ -1,0 +1,4 @@
+a = imread('mri.jpg'); 
+a = rgb2gray(a);
+b = edge(a,'sobel'); 
+imshow (b);
